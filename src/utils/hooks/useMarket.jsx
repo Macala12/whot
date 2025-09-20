@@ -3,15 +3,11 @@ import { refreshUsedCards } from "../../redux/actions";
 import { useEffect } from "react";
 
 function useMarket() {
-  const [deck, usedCards, userCards, opponentCards, activeCard] = useSelector(
-    (state) => [
-      state.deck,
-      state.usedCards,
-      state.userCards,
-      state.opponentCards,
-      state.activeCard,
-    ]
-  );
+  const deck = useSelector((state) => state.deck);
+  const usedCards = useSelector((state) => state.usedCards);
+  const userCards = useSelector((state) => state.userCards);
+  const opponentCards = useSelector((state) => state.opponentCards);
+  const activeCard = useSelector((state) => state.activeCard);
 
   const dispatch = useDispatch();
 
@@ -28,7 +24,7 @@ function useMarket() {
       // Refresh market
       dispatch(refreshUsedCards([...userCards, ...opponentCards, activeCard]));
     }
-  });
+  }, [activeCard, dispatch, market.length, opponentCards, usedCards]);
 
   return { market };
 }

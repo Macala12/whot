@@ -107,6 +107,8 @@ function Home() {
           <Link to="/play-computer">PLAY COMPUTER</Link>
           <p>OR</p>
           <Link to="/copylink">PLAY FRIEND</Link>
+          <p>OR</p>
+          <Link to="/play-connector/1">PLAY CONNECTOR</Link>
         </div>
       </main>
       <Footer />

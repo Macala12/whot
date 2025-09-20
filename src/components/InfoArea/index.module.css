@@ -21,8 +21,8 @@
 
 @media screen and (max-width: 650px) {
   .info_area {
-    bottom: 15px;
-    right: -60px;
+    bottom: 33px;
+    left: 50%;
   }
 }
 /*# sourceMappingURL=index.module.css.map */

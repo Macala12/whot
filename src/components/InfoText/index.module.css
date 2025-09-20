@@ -39,15 +39,17 @@
   .text {
     width: 150px;
     min-height: 70px;
-    left: -80px;
+    left: -60px;
     font-size: 14px;
   }
 }
 
 @media screen and (max-width: 650px) {
   .text {
-    padding: 6px;
+    padding: 9px;
     min-height: 60px;
+    font-size: 13px;
+    font-weight: 600;
   }
 }
 /*# sourceMappingURL=index.module.css.map */

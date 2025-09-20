@@ -17,7 +17,8 @@
   .number {
     --width: 20px;
     font-size: 12px;
-    margin-top: 5px;
+    margin-top: 15px;
+    border-radius: 50%;
   }
 }
 /*# sourceMappingURL=index.module.css.map */

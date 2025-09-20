@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import style from "./index.module.css";
 import Number from "../Number/Number";
 import Shape from "../Shape/Shape";
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { Flipped } from "react-flip-toolkit";
 import useMarket from "../../utils/hooks/useMarket";
 import goToMarket from "../../utils/functions/goToMarket";
@@ -23,18 +22,16 @@ function CardComponent({
   isMarketCard,
 }) {
   const [isShownState, setIsShownState] = useState(isShown);
-  const [whoIsToPlay, activeCard, userCards, usedCards, opponentCards] =
-    useSelector((state) => [
-      state.whoIsToPlay,
-      state.activeCard,
-      state.userCards,
-      state.usedCards,
-      state.opponentCards,
-    ]);
+
+  const activeCard = useSelector((state) => state.activeCard);
+  const userCards = useSelector((state) => state.userCards);
+  const usedCards = useSelector((state) => state.usedCards);
+  const opponentCards = useSelector((state) => state.opponentCards);
+
   const dispatch = useDispatch();
+  const store = useStore(); // 👈 we’ll use this for fresh state
   const { market } = useMarket();
   const isGameOver = useIsGameOver();
-
   const location = useLocation();
 
   if (location.pathname.includes("play-friend")) {
@@ -69,22 +66,36 @@ function CardComponent({
     setTimeout(() => {
       playOpponentCard();
     }, delay);
-  }, [activeCard, userCards, opponentCards]);
+  }, [
+    activeCard,
+    userCards,
+    opponentCards,
+    delay,
+    isGameOver,
+    isPlayed,
+    playOpponentCard,
+  ]);
+
+  const currentState = store.getState(); // 👈 always fresh
+  console.log("This is the current turn ", currentState.whoIsToPlay);
 
   const handleClick = () => {
-    if (isMarketCard && whoIsToPlay === "user") {
+    // const currentState = store.getState(); // 👈 always fresh
+    const currentTurn = currentState.whoIsToPlay;
+    console.log("This is the current turn ", currentTurn);
+    const currentActiveCard = currentState.activeCard;
+
+    if (isMarketCard && currentTurn === "user") {
       goToMarket("user", marketConfig, 1);
       dispatch(setWhoIsToPlay("opponent"));
       dispatch(setInfoText(infoTextValues.computersTurn));
+      console.log(currentTurn, " Just Played");
       return;
     }
 
     if (!isMine) return;
 
-    if (
-      whoIsToPlay === "user" &&
-      (number === activeCard.number || shape === activeCard.shape)
-    ) {
+    if (currentTurn === "user" && (number === currentActiveCard.number || shape === currentActiveCard.shape)) {
       playUserCard();
     }
   };

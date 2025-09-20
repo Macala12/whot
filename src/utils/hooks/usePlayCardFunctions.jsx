@@ -57,6 +57,7 @@ function usePlayCardFunctions({
 
     dispatch(setWhoIsToPlay("opponent"));
     dispatch(setInfoText(infoTextValues.computersTurn));
+    alert("Played User Card");
   };
 
   const playOpponentCard = () => {

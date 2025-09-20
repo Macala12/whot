@@ -5,7 +5,7 @@
   margin: 0;
   padding: 0;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
@@ -17,22 +17,59 @@ body {
   padding-top: 60px;
   height: 100vh;
   overflow: hidden;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.35)), to(rgba(0, 0, 0, 0.35))), url(./assets/background.jpeg);
-  background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url(./assets/background.jpeg);
+  background-color: #1F2833;
+  /* background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.35)), to(rgba(0, 0, 0, 0.35))), url(./assets/background.jpeg);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url(./assets/background.jpeg); */
 }
 
 .scroll-container {
   max-width: 650px;
   margin: 0 auto;
+  position: relative;
+}
+
+.user{
+  display: flex;
+  position: absolute;
+  bottom: -5px;
+  right: 0px;
+  height: fit-content;
+}
+.user-opponent{
+  top: -40px !important;
+  left: 0px !important;
+}
+.user img{
+  width: 30px;
+}
+.user .username{
+  font-weight: 700;
+  margin-left: 10px;
+  padding-top: 3px;
+  font-size: 13px;
+  color: #fff;
 }
 
 .scroll-container .grid {
   display: -ms-grid;
   display: grid;
   grid-auto-flow: column;
-  grid-gap: 20px;
+  grid-gap: 10px;
   padding-bottom: 15px;
   overflow: auto;
+}
+
+.timer{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: -100px;
+  margin-bottom: 45px;
+}
+.timer h6{
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
 }
 
 @media screen and (min-width: 700px) {
@@ -52,10 +89,15 @@ body {
 @media screen and (max-width: 650px) {
   .App {
     padding: 10px 30px;
-    padding-top: 80px;
+    padding-top: 170px;
   }
   .scroll-container .grid {
     padding-bottom: 7px;
+  }
+  .scroll-container .grid::-webkit-scrollbar {
+    border-radius: 15px;
+    height: 4px;
+    display: none;
   }
 }
 /*# sourceMappingURL=index.css.map */

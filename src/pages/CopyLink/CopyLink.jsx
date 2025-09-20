@@ -14,7 +14,7 @@ function CopyLink() {
   }, []);
 
   useEffect(() => {
-    setLink(`https://whot.trust-akpeti.com/play-friend/${randomCode}`);
+    setLink(`http://localhost:3000//play-friend/${randomCode}`);
   }, [randomCode]);
 
   return (
