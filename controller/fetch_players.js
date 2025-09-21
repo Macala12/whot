@@ -1,12 +1,18 @@
-const mongoose = require('mongoose');
 const Leaderboard = require("../models/Leaderboard");
 
 const fetchPlayers = async (tournamentId) => {
+  try {
     const fetchedPlayers = await Leaderboard.find({ leaderboardId: tournamentId });
-    if (!fetchedPlayers) {
-        console.error(error);
+
+    if (!fetchedPlayers || fetchedPlayers.length === 0) {
+      return { success: false, message: "No players found", players: [] };
     }
-    return fetchedPlayers;
-}
+
+    return { success: true, players: fetchedPlayers };
+  } catch (error) {
+    console.error("Error fetching players:", error);
+    return { success: false, message: "Error fetching players", players: [] };
+  }
+};
 
 module.exports = { fetchPlayers };
