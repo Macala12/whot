@@ -1,41 +1,10 @@
 const initializeDeck = require("./utils/functions/initializeDeck");
 const reverseState = require("./utils/functions/reverseState");
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-const players = require("./controller/dummyData");
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
 const mongoose = require("mongoose");
 const express = require("express");
 const Leaderboard = require("./models/Leaderboard");
 const { fetchPlayers } = require("./controller/fetch_players");
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-const cors = require('cors');
->>>>>>> Stashed changes
-
-const app = express();
-
-const PORT = process.env.PORT || 8000;
-
-const server = app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
-app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:4000"],  // or "*" to allow all
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
-app.use(express.json());
-
-<<<<<<< Updated upstream
-=======
 const cors = require('cors');
 
 const app = express();
@@ -54,8 +23,6 @@ app.use(cors({
 
 app.use(express.json());
 
-=======
->>>>>>> Stashed changes
 // DB connect
 let playersDbs;
 mongoose.connect("mongodb+srv://michael-user-1:Modubass1212@assetron.tdmvued.mongodb.net/octagames")
@@ -64,10 +31,6 @@ mongoose.connect("mongodb+srv://michael-user-1:Modubass1212@assetron.tdmvued.mon
 })
 .catch((err) => console.log("DB Connection Error:", err));
 
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 // 🔹 Tournament store
 let tournaments = {};
 function getTournament(tournamentId) {
@@ -82,27 +45,6 @@ function getTournament(tournamentId) {
   return tournaments[tournamentId];
 }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-// DB connect
-let playersDbs;
-mongoose
-  .connect("mongodb+srv://michael-user-1:Modubass1212@assetron.tdmvued.mongodb.net/octagames")
-  .then(() => {
-    console.log("MongoDB Connected");
-    return fetchPlayers("68a64d526223e4d5e74daaea"); // ⚠️ still hardcoded, you’ll replace later
-  })
-  .then((playersDb) => {
-    playersDbs = playersDb;
-    const round = createRound(playersDb, "68a64d526223e4d5e74daaea");
-    console.log(round);
-  })
-  .catch((err) => console.log("DB Connection Error:", err));
-
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 // Helpers
 function shuffleArray(array) {
   const shuffled = [...array];
@@ -116,33 +58,16 @@ function shuffleArray(array) {
 // 🔹 Create round scoped to tournament
 function createRound(players, tournamentId) {
   const tournament = getTournament(tournamentId);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  tournament.roundCount++;
-
-=======
   if (!tournament) {
     return { success: false, message: "Tournament not found" };
   }
 
   tournament.roundCount++;
 
-=======
-  if (!tournament) {
-    return { success: false, message: "Tournament not found" };
-  }
-
-  tournament.roundCount++;
-
->>>>>>> Stashed changes
   if (!players || players.length < 2) {
     return { success: false, message: "Not enough players to create a round" };
   }
 
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   const sevenMinutesLater = Date.now() + 30 * 60 * 1000;
   const nextRound = Date.now() + 33 * 60 * 1000;
   const shuffledPlayers = shuffleArray(players);
@@ -150,19 +75,9 @@ function createRound(players, tournamentId) {
   for (let i = 0; i < shuffledPlayers.length; i += 2) {
     if (i + 1 >= shuffledPlayers.length) break;
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    const roomId = `match_${i / 2 + 1}`;
-=======
     const randomVal = Math.random().toString(36);
 
     const roomId = `match_${i / 2 + 1}_${randomVal}`;
->>>>>>> Stashed changes
-=======
-    const randomVal = Math.random().toString(36);
-
-    const roomId = `match_${i / 2 + 1}_${randomVal}`;
->>>>>>> Stashed changes
     const { deck, userCards, usedCards, opponentCards, activeCard } = initializeDeck();
 
     const playerOneState = {
@@ -193,20 +108,9 @@ function createRound(players, tournamentId) {
       roundInProgress: false,
     });
   }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  return tournament.rooms;
-}
-
-=======
   return { success: true, message: "Round created", rooms: tournament.rooms };
 }
 
-=======
-  return { success: true, message: "Round created", rooms: tournament.rooms };
-}
-
->>>>>>> Stashed changes
 function endTournament(tournamentId) {
   const tournament = getTournament(tournamentId);
   if (!tournament) {
@@ -236,11 +140,6 @@ function endTournament(tournamentId) {
       for (const socket of socketsInRoom) {
         socket.leave(room.room_id);
       }
-<<<<<<< Updated upstream
-
-      io.to(player.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
-=======
->>>>>>> Stashed changes
     });
 
   });
@@ -321,10 +220,6 @@ app.post("/api/end", async (req, res) => {
     }
 });
 
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 const io = require("socket.io")(8080, {
   cors: {
     origin: [
@@ -563,16 +458,6 @@ io.on("connection", (socket) => {
     socket.emit("roundEnded");
   });
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  // socket.on("roundOver", () => {
-  //   socket.emit("roundEnded");
-  // });
-
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   // Game Totals
   socket.on("game:totals", ({ userCardTotal, opponentCardsTotal, tournamentId, username, winnerId, tournament_id }) => {
     const tournament = getTournament(tournament_id);
