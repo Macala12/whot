@@ -1,15 +1,47 @@
 const initializeDeck = require("./utils/functions/initializeDeck");
 const reverseState = require("./utils/functions/reverseState");
+<<<<<<< Updated upstream
 const players = require("./controller/dummyData");
+=======
+>>>>>>> Stashed changes
 
 const mongoose = require("mongoose");
 const express = require("express");
 const Leaderboard = require("./models/Leaderboard");
 const { fetchPlayers } = require("./controller/fetch_players");
+<<<<<<< Updated upstream
 
 const app = express();
 app.use(express.json());
 
+=======
+const cors = require('cors');
+
+const app = express();
+
+const PORT = process.env.PORT || 8000;
+
+const server = app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
+app.use(cors({
+  origin: ["http://localhost:3000", "http://localhost:4000"],  // or "*" to allow all
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.use(express.json());
+
+// DB connect
+let playersDbs;
+mongoose.connect("mongodb+srv://michael-user-1:Modubass1212@assetron.tdmvued.mongodb.net/octagames")
+.then(() => {
+  console.log("MongoDB Connected");
+})
+.catch((err) => console.log("DB Connection Error:", err));
+
+>>>>>>> Stashed changes
 // 🔹 Tournament store
 let tournaments = {};
 function getTournament(tournamentId) {
@@ -24,6 +56,7 @@ function getTournament(tournamentId) {
   return tournaments[tournamentId];
 }
 
+<<<<<<< Updated upstream
 // DB connect
 let playersDbs;
 mongoose
@@ -39,6 +72,8 @@ mongoose
   })
   .catch((err) => console.log("DB Connection Error:", err));
 
+=======
+>>>>>>> Stashed changes
 // Helpers
 function shuffleArray(array) {
   const shuffled = [...array];
@@ -52,8 +87,21 @@ function shuffleArray(array) {
 // 🔹 Create round scoped to tournament
 function createRound(players, tournamentId) {
   const tournament = getTournament(tournamentId);
+<<<<<<< Updated upstream
   tournament.roundCount++;
 
+=======
+  if (!tournament) {
+    return { success: false, message: "Tournament not found" };
+  }
+
+  tournament.roundCount++;
+
+  if (!players || players.length < 2) {
+    return { success: false, message: "Not enough players to create a round" };
+  }
+
+>>>>>>> Stashed changes
   const sevenMinutesLater = Date.now() + 30 * 60 * 1000;
   const nextRound = Date.now() + 33 * 60 * 1000;
   const shuffledPlayers = shuffleArray(players);
@@ -61,7 +109,13 @@ function createRound(players, tournamentId) {
   for (let i = 0; i < shuffledPlayers.length; i += 2) {
     if (i + 1 >= shuffledPlayers.length) break;
 
+<<<<<<< Updated upstream
     const roomId = `match_${i / 2 + 1}`;
+=======
+    const randomVal = Math.random().toString(36);
+
+    const roomId = `match_${i / 2 + 1}_${randomVal}`;
+>>>>>>> Stashed changes
     const { deck, userCards, usedCards, opponentCards, activeCard } = initializeDeck();
 
     const playerOneState = {
@@ -92,9 +146,126 @@ function createRound(players, tournamentId) {
       roundInProgress: false,
     });
   }
+<<<<<<< Updated upstream
   return tournament.rooms;
 }
 
+=======
+  return { success: true, message: "Round created", rooms: tournament.rooms };
+}
+
+function endTournament(tournamentId) {
+  const tournament = getTournament(tournamentId);
+  if (!tournament) {
+    return { success: false, message: "Tournament not found" };
+  }
+  
+  // Loop through all rooms in this tournament
+  tournament.rooms.forEach(room => {
+    console.log("room to be removed: ", room);
+
+    const players = [
+      { username: room.playerone, socketId: room.p1SocketId, room_id: room.room_id },
+      { username: room.playertwo, socketId: room.p2SocketId, room_id: room.room_id }
+    ];
+
+    players.forEach(async player => {
+
+      console.log("Room Id: ", player.room_id);      
+
+      io.to(player.room_id).emit("tournamentHasEnded", {
+        roomId: player.room_id,
+        tournamentId,
+        message: "The tournament has ended."
+      });
+
+      const socketsInRoom = await io.in(room.room_id).fetchSockets();
+      for (const socket of socketsInRoom) {
+        socket.leave(room.room_id);
+      }
+
+      io.to(player.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
+    });
+
+  });
+
+  // Clear all rooms from the tournament
+  tournament.rooms = [];
+
+  // Optionally, delete the tournament entirely
+  deleteTournament(tournamentId); // <-- implement this function to remove from memory/DB
+
+  console.log(`Tournament ${tournamentId} has ended and all rooms removed.`);
+  return { success: true, message: "Tournament ended successfully" };
+}
+
+function deleteTournament(tournamentId) {
+  if (tournaments[tournamentId]) {
+    delete tournaments[tournamentId];
+    console.log(`Tournament ${tournamentId} deleted from memory.`);
+  } else {
+    console.log(`Tournament ${tournamentId} not found.`);
+  }
+}
+
+app.post("/api/create", async (req, res) => {
+try {
+  const { tournamentId } = req.body;    
+
+  if (!tournamentId) {
+    return res.status(400).json({ error: "Missing tournamentId" });
+  }
+
+  const players = await fetchPlayers(tournamentId);
+
+  if (!players.success) {
+    return res.status(404).json({ error: players.message });
+  }    
+
+  const result = createRound(players.players, tournamentId);
+
+  if (!result.success) {
+    return res.status(400).json({ error: result.message });
+  }
+
+  return res.json({
+    success: true,
+    message: result.message,
+    rooms: result.rooms // optional, useful if frontend needs to know
+  });  
+
+} catch (error) {
+  console.error("Error creating tournament round:", error);
+  res.status(500).json({ error: "Server error" });
+}
+});
+
+app.post("/api/end", async (req, res) => {
+  try {
+      const { tournamentId } = req.body;
+
+      if (!tournamentId) {
+        return res.status(400).json({ error: "Missing tournamentId" });
+      }
+
+      const result = endTournament(tournamentId);
+
+      if (!result.success) {
+        return res.status(404).json({ error: result.message });
+      }
+
+      return res.json({
+        success: true,
+        message: result.message
+      });
+
+    } catch (error) {
+      console.error("Error ending tournament:", error);
+      res.status(500).json({ error: "Server error" });
+    }
+});
+
+>>>>>>> Stashed changes
 const io = require("socket.io")(8080, {
   cors: {
     origin: [
@@ -333,10 +504,13 @@ io.on("connection", (socket) => {
     socket.emit("roundEnded");
   });
 
+<<<<<<< Updated upstream
   // socket.on("roundOver", () => {
   //   socket.emit("roundEnded");
   // });
 
+=======
+>>>>>>> Stashed changes
   // Game Totals
   socket.on("game:totals", ({ userCardTotal, opponentCardsTotal, tournamentId, username, winnerId, tournament_id }) => {
     const tournament = getTournament(tournament_id);
@@ -376,7 +550,11 @@ io.on("connection", (socket) => {
           io.to(socket.id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
       }
 
+<<<<<<< Updated upstream
       if (roundCount === 3) {
+=======
+      if (roundCount > 3) {
+>>>>>>> Stashed changes
           io.to(socket.id).emit("tournamentIsOver", { isOver: true, tournamentId });
       }
     }
