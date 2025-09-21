@@ -1,6 +1,5 @@
 const initializeDeck = require("./utils/functions/initializeDeck");
 const reverseState = require("./utils/functions/reverseState");
-const players = require("./controller/dummyData");
 
 const mongoose = require("mongoose");
 const express = require("express");
