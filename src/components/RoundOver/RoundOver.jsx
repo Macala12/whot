@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 function RoundOver() {
   const navigate = useNavigate();
-  const tournament_Id = "68a64d526223e4d5e74daaea";
+  const tournament_Id = sessionStorage.getItem("tID");
   const userCards = useSelector((state) => state.userCards);
   const opponentCards = useSelector((state) => state.opponentCards);
   const tournamentId = sessionStorage.getItem("gameId");

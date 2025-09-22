@@ -23,7 +23,7 @@ import WaitingState from "../../components/WaitingState/WaitingState";
 
 function App() {  
   const { room_id } = useParams();
-  const tournamentId = "68a64d526223e4d5e74daaea";
+  const tournamentId = sessionStorage.getItem("tID");
   let room_id_2 = sessionStorage.getItem("gameId");
 
   if (room_id_2 !== room_id) {

@@ -5,7 +5,7 @@ import CardNumber from "../CardNumber/CardNumber";
 import socket from "../../socket/socket";
 
 function UserCards() {
-  const tournamentId = "68a64d526223e4d5e74daaea";
+  const tournamentId = sessionStorage.getItem("tID");
   const username = localStorage.getItem("storedId");
   const room_id = sessionStorage.getItem("gameId")
   const userCards = useSelector((state) => state.userCards);

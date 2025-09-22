@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function Leaderboard() {
   const username = localStorage.getItem("storedId");
   const { gameId } = useParams();
-  const tournamentId = "68a64d526223e4d5e74daaea";
+  const tournamentId = sessionStorage.getItem("tID");
   const navigate = useNavigate();
 
   const [timeLeft, setTimeLeft] = useState(null);

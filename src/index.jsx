@@ -13,7 +13,7 @@ root.render(
         <Route path="/copylink" exact element={<CopyLink />} />
         <Route path="/play-friend" exact element={<PlayFriend />} />
         <Route path="/play-friend/:room_id" exact element={<PlayFriend />} />
-        <Route path="/play-connector/:storeId/:gameId" exact element={<PlayConnector />} />
+        <Route path="/play-connector/:storeId/:gameId/:tournamentId" exact element={<PlayConnector />} />
         <Route path="/leaderboard/:gameId" exact element={<Leaderboard />} />
         <Route path="/tournamentOver/:tournamentid" exact element={<TournamentOver />} />
       </Routes>

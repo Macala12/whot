@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import socket from "../../socket/socket";
 
 function RoundTimer() {
-  const tournamentId = "68a64d526223e4d5e74daaea";
+  const tournamentId = sessionStorage.getItem("tID");
   const room_id = sessionStorage.getItem("gameId");
   const [timeLeft, setTimeLeft] = useState(null);
   const [isTimeUp, setIsTimeUp] = useState(false);

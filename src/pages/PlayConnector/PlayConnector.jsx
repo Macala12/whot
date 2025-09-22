@@ -6,8 +6,7 @@ import React, { useEffect, useState } from "react";
 
 function PlayConnector() {
   const navigate = useNavigate();
-  const { storeId, gameId } = useParams();
-  const tournamentId = "68a64d526223e4d5e74daaea";
+  const { storeId, gameId, tournamentId } = useParams();
 
   const [errorText, setErrorText] = useState("");
   const [timerText, setTimerText] = useState("Connecting...");
@@ -16,7 +15,8 @@ function PlayConnector() {
   useEffect(() => {
     if (storeId && gameId) {
       localStorage.setItem("storedId", storeId);
-      sessionStorage.setItem("gameId", gameId);      
+      sessionStorage.setItem("gameId", gameId);
+      sessionStorage.setItem("tID", tournamentId);      
       socket.emit("send_id", { id: storeId, tournamentId: tournamentId });
     }
   }, [storeId, gameId]);
