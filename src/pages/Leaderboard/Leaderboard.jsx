@@ -161,7 +161,7 @@ function Leaderboard() {
                           alt={player.username}
                           width="20px"
                         />
-                        {player.username}
+                        {player.username.replace(/[^\w]/g, "")}
                       </td>
                       <td>{player.score}</td>
                       <td>{player.prize || "-"}</td>
