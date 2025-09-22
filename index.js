@@ -18,7 +18,7 @@ const server = app.listen(PORT, () => {
 });
 
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:4000"],  // or "*" to allow all
+  origin: ["http://localhost:3000", "http://localhost:4000", "https://octagames-whot.onrender.com/"],  // or "*" to allow all
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
@@ -224,12 +224,13 @@ app.get("/api/end", async (req, res) => {
     }
 });
 
-const io = require("socket.io")(8080, {
+const io = require("socket.io")(server, {
   cors: {
     origin: [
       "http://localhost:3000", 
       "http://localhost:4000",
-      "http://172.20.10.3:3000"
+      "http://172.20.10.3:3000",
+      "https://octagames-whot.onrender.com/"
     ], // React dev server
     // origin: "*",
     methods: ["GET", "POST"]
