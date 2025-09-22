@@ -113,7 +113,6 @@ function createRound(players, tournamentId) {
   return { success: true, message: "Round created", rooms: tournament.rooms };
 }
 
-
 function endTournament(tournamentId) {
   const tournament = getTournament(tournamentId);
   if (!tournament) {
@@ -168,9 +167,7 @@ function deleteTournament(tournamentId) {
   }
 }
 
-app.get("/api/create", async (req, res) => {
-  console.log("Hitting");
-  
+app.get("/api/create", async (req, res) => {  
   try {
     const { tournamentId } = req.query;    
 
