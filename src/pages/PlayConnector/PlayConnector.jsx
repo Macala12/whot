@@ -1,12 +1,18 @@
 import "../PlayConnector/index.css";
 import { ErrorPage } from "../../components";
-import { useParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import socket from "../../socket/socket";
 import React, { useEffect, useState } from "react";
 
 function PlayConnector() {
   const navigate = useNavigate();
-  const { storeId, gameId, tournamentId } = useParams();
+  const [searchParams] = useSearchParams();
+
+  const storeId = searchParams.get("player");
+  const gameId = searchParams.get("roomId");
+  const tournamentId = searchParams.get("id");
+
+  // const { storeId, gameId, tournamentId } = useParams();
 
   const [errorText, setErrorText] = useState("");
   const [timerText, setTimerText] = useState("Connecting...");
