@@ -169,8 +169,10 @@ function deleteTournament(tournamentId) {
 }
 
 app.get("/api/create", async (req, res) => {
+  console.log("Hitting");
+  
   try {
-    const { tournamentId } = req.body;    
+    const { tournamentId } = req.query;    
 
     if (!tournamentId) {
       return res.status(400).json({ error: "Missing tournamentId" });
@@ -202,7 +204,7 @@ app.get("/api/create", async (req, res) => {
 
 app.get("/api/end", async (req, res) => {
   try {
-      const { tournamentId } = req.body;
+      const { tournamentId } = req.query;
 
       if (!tournamentId) {
         return res.status(400).json({ error: "Missing tournamentId" });
