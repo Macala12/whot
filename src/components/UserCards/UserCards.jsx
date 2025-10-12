@@ -18,9 +18,7 @@ function UserCards() {
   // const totalValue = userCards.reduce((acc, card) => acc + card.number, 0);
 
   useEffect(() => {
-    socket.on("playersData", (data) => {
-      console.log("Hitting players Data");
-      
+    socket.on("playersData", (data) => {      
       // Assuming this component is showing playerOne (you can adjust if it’s playerTwo)
       setPlayerData({
         username: data.playerOne.username,

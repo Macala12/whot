@@ -22,7 +22,8 @@ function PlayConnector() {
     if (storeId && gameId) {
       localStorage.setItem("storedId", storeId);
       sessionStorage.setItem("gameId", gameId);
-      sessionStorage.setItem("tID", tournamentId);      
+      sessionStorage.setItem("tID", tournamentId);   
+      sessionStorage.setItem("shouldReload", true);   
       socket.emit("send_id", { id: storeId, tournamentId: tournamentId });
     }
   }, [storeId, gameId]);

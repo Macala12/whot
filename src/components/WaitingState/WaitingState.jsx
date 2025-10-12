@@ -24,7 +24,7 @@ function WaitingState() {
 
     if (!endTime) {
       // If not, set it for 5 minutes from now
-      endTime = Date.now() + 1 * 60 * 1000;
+      endTime = Date.now() + 5 * 60 * 1000;
       localStorage.setItem("waitingEndTime", endTime);
     }
 

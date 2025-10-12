@@ -104,7 +104,7 @@ function Leaderboard() {
       const assignedRoom = assignments[username];
 
       if (assignedRoom) {
-        navigate(`/play-connector/${username}/${assignedRoom}`);
+        navigate(`/play-connector?player=${username}&roomId=${assignedRoom}&id=${tournamentId}`);
       } else {
         // fallback if no assignment found
         console.warn("No new room assigned for", username, "payload:", data);

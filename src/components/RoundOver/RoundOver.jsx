@@ -29,9 +29,10 @@ function RoundOver() {
 
   const [countdown, setCountdown] = useState(null);
   const [winner, setWinner] = useState(null);
+  const [showCountCards, setShowCountCards] = useState(false);
 
   // Send totals to server once available
-  useEffect(() => {
+  useEffect(() => {    
     if (userCardTotal && opponentCardsTotal) {
       let winnerId;      
       if (gameOver === "normal") {
@@ -41,20 +42,24 @@ function RoundOver() {
           winnerId = "opponent";
         }
         socket.emit("timeOut");
-      } 
-      
-      else if (gameOver === "timedOut") {
+      } else if (gameOver === "timedOut") {
         winnerId = "user";
         socket.emit("timeOut");
-      }
-      
-      else{
+      } else if (gameOver === "wastedTime") {
+        const loser = sessionStorage.getItem("wastedTime");
+        if (loser === username) {
+          winnerId = "opponent";
+        }else{
+          winnerId = "user";
+        }
+        socket.emit("timeOut");
+      } else{
         sessionStorage.setItem("gameOver", "countCard")
         if (userCardTotal < opponentCardsTotal) {
           winnerId = "user";
           setWinner(winnerId);
         }else if (userCardTotal === opponentCardsTotal) {
-          winnerId = "";
+          winnerId = "user";
         }else if(opponentCardsTotal < userCardTotal){
           winnerId = "opponent";
           setWinner(winnerId);
@@ -96,58 +101,56 @@ function RoundOver() {
       if (winnerId === "user") {
           confettiAnimation(confetti);
       }
-    });
+  });
 
-    socket.on("new_round", ({ userGameId, toLeaderboard }) => {
-      localStorage.removeItem("waitingEndTime"); // reset for next round
-      console.log(toLeaderboard);
-      
-      if (toLeaderboard === true || toLeaderboard === "true") {
-        setCountdown("5")
-        setTimeout(() => {
-          sessionStorage.removeItem("gameOver");
-          navigate(`/leaderboard/${userGameId}`);
-        }, 5000);
-      }
-    });
+  socket.on("new_round", ({ userGameId, toLeaderboard }) => {
+    localStorage.removeItem("waitingEndTime"); // reset for next round
+    console.log(toLeaderboard);
+    
+    if (toLeaderboard === true || toLeaderboard === "true") {
+      setCountdown("5")
+      setTimeout(() => {
+        sessionStorage.removeItem("gameOver");
+        sessionStorage.removeItem('wastedTime');
+        navigate(`/leaderboard/${userGameId}`);
+      }, 5000);
+    }
+  });
 
     socket.on("tournamentIsOver", ({ isOver }) => {
-      if (isOver) {
-        localStorage.removeItem("waitingEndTime"); // remove all Stored Information
-        sessionStorage.removeItem("gameOver");
-        localStorage.removeItem("storedId");
-        sessionStorage.removeItem("gameId");
-
-        socket.emit("endTournamentRoom", { tournamentId: tournament_Id, room_id: tournamentId} );
-      }
+      socket.emit("endTournamentRoom", { tournamentId: tournament_Id, roomId: tournamentId} );        
     });
 
     socket.on("tournamentHasEnded", (data) => {
-      navigate(`/tournamentOver/${data.tournamentId}`);
+      setTimeout(() => {
+        sessionStorage.clear();
+        localStorage.clear();
+        navigate(`/tournamentOver/${data.tournamentId}`);
+      }, 3000);
     });
 
-    socket.on("start_timeout", ({ time }) => {
-      const endTime = new Date(time).getTime();
+    // socket.on("start_timeout", ({ time }) => {
+    //   const endTime = new Date(time).getTime();
 
-      const interval = setInterval(() => {
-        const now = Date.now();
-        const distance = endTime - now;
+    //   const interval = setInterval(() => {
+    //     const now = Date.now();
+    //     const distance = endTime - now;
 
-        if (distance <= 0) {
-          clearInterval(interval);
-          setCountdown("0:00");
-          alert("redirecting");
-          return;
-        }
+    //     if (distance <= 0) {
+    //       clearInterval(interval);
+    //       setCountdown("0:00");
+    //       alert("redirecting");
+    //       return;
+    //     }
 
-        const minutes = Math.floor(
-          (distance % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    //     const minutes = Math.floor(
+    //       (distance % (1000 * 60 * 60)) / (1000 * 60)
+    //     );
+    //     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        setCountdown(`${minutes}:${seconds < 10 ? "0" : ""}${seconds}`);
-      }, 1000);
-    });
+    //     setCountdown(`${minutes}:${seconds < 10 ? "0" : ""}${seconds}`);
+    //   }, 1000);
+    // });
 
     return () => {
       socket.off("winner");
@@ -155,6 +158,12 @@ function RoundOver() {
     };
 
   }, [navigate]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowCountCards(true);
+    }, 3000);
+  }, [setShowCountCards])
 
   const userStatus = winner === "user" ? "You Won" : "You Lost";
 
@@ -164,68 +173,65 @@ function RoundOver() {
 
   return (
     <div className="roundOverContainer">
-      {["timedOut", "normal"].includes(gameOver) ? (
+      {["timedOut", "normal", "wastedTime"].includes(gameOver) ? (
         // 👇 If game is over (timed out OR normal)
         <h4>Game Over</h4>
       ) : (
         // 👇 Full RoundOver UI if gameOver is something else (e.g. false/null)
         <>
-          <h4>Round Over</h4>
-          <h5 className={winner === "user" ? "status won" : "status lost"}>
-            {userStatus}
-          </h5>
+          {showCountCards === false && (
+            <>
+              <h4>Counting Cards...</h4>
+            </>
+          )}
+          {showCountCards === true && (
+            <>
+              <h4>Round Over</h4>
+              <h5 className={winner === "user" ? "status won" : "status lost"}>
+                {userStatus}
+              </h5>
 
-          <div className="roundoverBox">
-            {/* User */}
-            <div>
-              <div className="img_box">
-                <img
-                  src={
-                    playerData.playerOne.userImg ||
-                    "https://api.dicebear.com/9.x/big-smile/svg?seed=user"
-                  }
-                  alt="User Avatar"
-                />
-              </div>
-              <h6>{playerData.playerOne.username || username}</h6>
-              <h4>
-                {playerData.playerOne.username === username
-                  ? userCardTotal
-                  : opponentCardsTotal}
-              </h4>
+              <div className="roundoverBox">
+                {/* User */}
+                <div>
+                  <div className="img_box">
+                    <img
+                      src={
+                        playerData.playerOne.userImg ||
+                        "https://api.dicebear.com/9.x/big-smile/svg?seed=user"
+                      }
+                      alt="User Avatar"
+                    />
+                  </div>
+                  <h6>{playerData.playerOne.username || username}</h6>
+                  <h4>
+                    {playerData.playerOne.username === username
+                      ? userCardTotal
+                      : opponentCardsTotal}
+                  </h4>
+                </div>
 
-              <div className="grid">
-                {userCards.map((card) => (
-                  <CardComponent
-                    key={card.shape + card.number}
-                    shape={card.shape}
-                    number={card.number}
-                    isMine={true}
-                    isShown={true}
-                  />
-                ))}
+                {/* Opponent */}
+                <div>
+                  <div className="img_box">
+                    <img
+                      src={
+                        playerData.playerTwo.userImg ||
+                        "https://api.dicebear.com/9.x/big-smile/svg?seed=opponent"
+                      }
+                      alt="Opponent Avatar"
+                    />
+                  </div>
+                  <h6>{playerData.playerTwo.username}</h6>
+                  <h4>
+                    {playerData.playerTwo.username === username
+                      ? userCardTotal
+                      : opponentCardsTotal}
+                  </h4>
+                </div>
               </div>
-            </div>
-
-            {/* Opponent */}
-            <div>
-              <div className="img_box">
-                <img
-                  src={
-                    playerData.playerTwo.userImg ||
-                    "https://api.dicebear.com/9.x/big-smile/svg?seed=opponent"
-                  }
-                  alt="Opponent Avatar"
-                />
-              </div>
-              <h6>{playerData.playerTwo.username}</h6>
-              <h4>
-                {playerData.playerTwo.username === username
-                  ? userCardTotal
-                  : opponentCardsTotal}
-              </h4>
-            </div>
-          </div>
+            </>
+          )}
         </>
       )}
 

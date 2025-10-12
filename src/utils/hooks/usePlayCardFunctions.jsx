@@ -15,7 +15,7 @@ function usePlayCardFunctions({
   goToMarket,
   marketConfig,
   setIsShownState,
-  delay,
+  delay, 
 }) {
   const location = useLocation();
 
@@ -57,7 +57,6 @@ function usePlayCardFunctions({
 
     dispatch(setWhoIsToPlay("opponent"));
     dispatch(setInfoText(infoTextValues.computersTurn));
-    alert("Played User Card");
   };
 
   const playOpponentCard = () => {

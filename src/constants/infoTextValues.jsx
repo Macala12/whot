@@ -9,5 +9,5 @@ const infoTextValues = {
   opponentReceivedGeneralMarket: "You played a general market so play again",
   opponentSuspended: "You played a suspension card so play again",
 };
-
+ 
 export default infoTextValues;

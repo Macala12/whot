@@ -3,7 +3,7 @@ import style from "./index.module.css";
 import useIsGameOver from "../../utils/hooks/useIsGameOver";
 import confetti from "canvas-confetti";
 import confettiAnimation from "../../utils/functions/confettiAnimation";
-import socket from "../../socket/socket";
+import socket from "../../socket/socket"; 
 
 function GameOver({ winner }) {
   const isGameOver = useIsGameOver();

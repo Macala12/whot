@@ -24,9 +24,7 @@ function OpponentCards() {
         userImgTwo: data.playerTwo.userImg,
         usernameOne: data.playerOne.username,
         userImgOne: data.playerOne.userImg 
-      });
-      console.log(data);
-      
+      });      
     });
 
     socket.emit("getPlayersData", { room_id: room_id, tournamentId: tournamentId });
@@ -62,11 +60,11 @@ function OpponentCards() {
       <div className="grid">
         {opponentCards.map((card) => (
           <CardComponent
-            shape={card.shape}
-            number={card.number}
+            // shape={card.shape}
+            // number={card.number}
             isMine={false}
             isShown={false}
-            key={card.shape + card.number}
+            // key={card.shape + card.number}
           />
         ))}
       </div>
