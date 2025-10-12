@@ -30,8 +30,23 @@ let playersDbs;
 mongoose.connect("mongodb+srv://michael-user-1:Modubass1212@assetron.tdmvued.mongodb.net/octagames")
 .then(() => {
   console.log("MongoDB Connected");
+  // hardcoded();
 })
 .catch((err) => console.log("DB Connection Error:", err));
+
+
+//Hardcoded
+async function hardcoded() {
+  const players = await fetchPlayers("68dd869c8c9854acf5ad1a1d");
+
+if (players.success) {
+  const result = createRound(players.players, "68dd869c8c9854acf5ad1a1d");
+
+  if (result.success) {
+    console.log(result.rooms);
+  }
+}
+}
 
 // 🔹 Tournament store
 let tournaments = {};
@@ -41,9 +56,19 @@ function getTournament(tournamentId) {
       rooms: [],
       winners: [],
       roundCount: 0,
-      isCreatingRound: false, // 🔹 lock to prevent duplicate round creation
+      isCreatingRound: false, // ✅ prevents concurrent round creation
+      roundPromise: null,       // ✅ will hold a Promise object (not just false)
+      newRoomCreated: false
     };
+  } else {
+    // Ensure helper fields exist (for older tournaments or restored state)
+    const t = tournaments[tournamentId];
+    if (typeof t.isCreatingRound === "undefined") t.isCreatingRound = false;
+    if (typeof t.roundPromise === "undefined") t.roundPromise = null;
+    if (!Array.isArray(t.rooms)) t.rooms = [];
+    if (!Array.isArray(t.winners)) t.winners = [];
   }
+
   return tournaments[tournamentId];
 }
 
@@ -70,8 +95,8 @@ function createRound(players, tournamentId) {
     return { success: false, message: "Not enough players to create a round" };
   }
 
-  const sevenMinutesLater = Date.now() + 30 * 60 * 1000;
-  const nextRound = Date.now() + 33 * 60 * 1000;
+  const sevenMinutesLater = Date.now() + 1.3 * 60 * 1000;
+  const nextRound = Date.now() + 2.3 * 60 * 1000;
   const shuffledPlayers = shuffleArray(players);
 
   for (let i = 0; i < shuffledPlayers.length; i += 2) {
@@ -121,7 +146,6 @@ function endTournament(tournamentId) {
   
   // Loop through all rooms in this tournament
   tournament.rooms.forEach(room => {
-    console.log("room to be removed: ", room);
 
     const players = [
       { username: room.playerone, socketId: room.p1SocketId, room_id: room.room_id },
@@ -129,9 +153,6 @@ function endTournament(tournamentId) {
     ];
 
     players.forEach(async player => {
-
-      console.log("Room Id: ", player.room_id);      
-
       io.to(player.room_id).emit("tournamentHasEnded", {
         roomId: player.room_id,
         tournamentId,
@@ -251,7 +272,7 @@ io.on("connection", (socket) => {
 
     let currentRoom = rooms.find((room) => room.room_id === room_id);
     if (!currentRoom) {
-      io.to(socket.id).emit("error", "This room does not exist.");
+      io.to(socket.id).emit("error", "This room does not exist or Tournament has Ended");
       return;
     }
 
@@ -332,26 +353,48 @@ io.on("connection", (socket) => {
     const room = tournament.rooms.find((r) => r.room_id === room_id);
     if (room) {
       const roundtime = room.roundOverTime;
-      io.to(socket.id).emit("roundTimer", { roundtime });
+      io.to(room_id).emit("roundTimer", { roundtime });
     }
+  });
+
+  socket.on("specialMoveCall", ({ room_id, tournamentId, move, whoPlayed }) => {
+    io.to(room_id).emit("specialMoveReceive", {specialMove: move, whoPlayed: whoPlayed});
+  });
+
+  socket.on("wastedTime", ({ room_id, tournamentId, username }) => {
+    io.to(room_id).emit("setWastedTime", { value: true, username: username });
   });
 
   // Update State
   socket.on("sendUpdatedState", (updatedState, room_id, tournamentId) => {
     const tournament = getTournament(tournamentId);
-    const playerOneState = updatedState.player === "one" ? updatedState : reverseState(updatedState);
+    if (!tournament) return;
 
+    // Determine playerOneState
+    const playerOneState =
+      updatedState.player === "one" ? updatedState : reverseState(updatedState);
+
+    const playerTwoState = reverseState(playerOneState);
+
+    // Update both player states in the room
     tournament.rooms = tournament.rooms.map((room) => {
       if (room.room_id === room_id) {
-        return { ...room, playerOneState };
+        return {
+          ...room,
+          playerOneState,
+          playerTwoState,
+        };
       }
-      // console.log(room);
       return room;
     });
 
-    socket.broadcast.to(room_id).emit("dispatch", {
+    // Emit updated state to all clients in the room (including sender)
+    io.to(room_id).emit("dispatch", {
       type: "UPDATE_STATE",
-      payload: { playerOneState, playerTwoState: reverseState(playerOneState) },
+      payload: {
+        playerOneState,
+        playerTwoState,
+      },
     });
   });
 
@@ -365,13 +408,12 @@ io.on("connection", (socket) => {
     const currentRoom = tournament.rooms.find((room) => room.room_id === gameId);
     if (!currentRoom) return;
 
-      io.to(socket.id).emit("nextRoundTime", {
+      io.to(currentRoom.room_id).emit("nextRoundTime", {
       nextRoundTime: currentRoom.nextRoundTime,
       leaderboard,
       ROUNDS_LEFT: 5 - tournament.roundCount,
     });
 
-    console.log("Sent next round time");
     
   });
 
@@ -390,37 +432,41 @@ io.on("connection", (socket) => {
   });
 
   socket.on("endTournamentRoom", ({ tournamentId, roomId }) => {
+    
+    
     const tournament = getTournament(tournamentId);
     if (!tournament) return;
 
-    // 1. Find the room
-    const roomIndex = tournament.rooms.findIndex(r => r.room_id === roomId);
-    if (roomIndex === -1) return;
+    // ✅ Find the room directly
+    const room = tournament.rooms.find(r => r.room_id === roomId);
+    if (!room) {
+      io.to(roomId).emit("tournamentHasEnded", {
+        roomId,
+        tournamentId,
+        message: "The tournament has ended."
+      });
+      return;
+    }
 
-    const room = tournament.rooms[roomIndex];
-
-    console.log("room to be removed: ", room);
-    
-
-    // 2. Notify all players in that room
+    // 1️⃣ Notify all players in that room
     room.players.forEach(player => {
-      io.to(player.socketId).emit("tournamentHasEnded", {
+      io.to(roomId).emit("tournamentHasEnded", {
         roomId,
         tournamentId,
         message: "The tournament has ended."
       });
 
-      // 3. Remove each socket from the room
-      const playerSocket = io.sockets.sockets.get(player.socketId);
+      // 2️⃣ Remove each socket from the room
+      const playerSocket = io.sockets.sockets.get(roomId);
       if (playerSocket) {
         playerSocket.leave(roomId);
       }
     });
 
-    // 4. Delete the room from tournament
-    tournament.rooms.splice(roomIndex, 1);
+    // 3️⃣ Remove the room from the array safely
+    tournament.rooms = tournament.rooms.filter(r => r.room_id !== roomId);
 
-    console.log(`Tournament room ${roomId} ended.`);
+    console.log(`✅ Tournament room ${roomId} ended and removed.`);
   });
 
   socket.on("confirmOnlineState", (storedId, room_id, tournamentId) => {
@@ -428,8 +474,6 @@ io.on("connection", (socket) => {
     let currentRoom = tournament.rooms.find((r) => r.room_id === room_id);
 
     if (!currentRoom) return;
-
-    console.log("confirmOnlineState ran for", storedId);
 
     // Find the joining player
     let thisPlayer = currentRoom.players.find(
@@ -463,10 +507,6 @@ io.on("connection", (socket) => {
     socket.emit("roundEnded");
   });
 
-  // socket.on("roundOver", () => {
-  //   socket.emit("roundEnded");
-  // });
-
   // Game Totals
   socket.on("game:totals", ({ userCardTotal, opponentCardsTotal, tournamentId, username, winnerId, tournament_id }) => {
     const tournament = getTournament(tournament_id);
@@ -485,7 +525,7 @@ io.on("connection", (socket) => {
       winnerUsername = winnerId === "user" ? user : opponent;
     } else {
       const decidedWinnerId = userCardTotal < opponentCardsTotal ? "user" : "opponent";
-      io.to(socket.id).emit("winner", { winnerId: decidedWinnerId });
+      io.to(currentRoom.room_id).emit("winner", { winnerId: decidedWinnerId });
       winnerUsername = decidedWinnerId === "user" ? user : opponent;
     }
 
@@ -495,19 +535,23 @@ io.on("connection", (socket) => {
 
     if (winners.length === 1) {
       winners.forEach(async (winner) => {
-        await Leaderboard.findOneAndUpdate(
+        const updatescore = await Leaderboard.findOneAndUpdate(
           { leaderboardId: tournament_id, username: winner },
           { $inc: { score: 3 } },
           { new: true }
         );
+
+        if (updatescore) {
+          console.log(`Update score for ${winner}`);
+        }
       });
-
-      if (roundCount < 3) {
-          io.to(socket.id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
-      }
-
-      if (roundCount > 3) {
-          io.to(socket.id).emit("tournamentIsOver", { isOver: true, tournamentId });
+      
+      if (roundCount === 1) {
+          io.to(currentRoom.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
+      }else{
+        if (roundCount < 2) {
+            io.to(currentRoom.room_id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
+        }
       }
     }
   });
@@ -530,81 +574,102 @@ io.on("connection", (socket) => {
   });
 
   // Player Ready
-  socket.on("player_ready", ({ room_id, username, tournamentId }) => {
+  socket.on("player_ready", async ({ room_id, username, tournamentId }) => {
     const tournament = getTournament(tournamentId);
     if (!tournament) return;
+    
+    tournament.isCreatingRound = true;
 
-    // Ensure lock flag exists
+    // Ensure helper fields exist
+    if (!tournament.rooms) tournament.rooms = [];
+    if (!tournament.roundPromise) tournament.roundPromise = null;
     if (typeof tournament.isCreatingRound === "undefined") {
       tournament.isCreatingRound = false;
     }
 
-    const room = tournament.rooms.find((r) => r.room_id === room_id);
-    if (!room) return;
-
-    // normalize player keys (supports both p1/p2 or playerone/playertwo)
-    const p1Key = room.p1 ?? room.playerone ?? null;
-    const p2Key = room.p2 ?? room.playertwo ?? null;
-    if (!p1Key || !p2Key) {
-      console.warn("Room missing player keys:", room);
+    // 🕐 If round creation is already happening — wait for it
+    if (tournament.isCreatingRound && tournament.roundPromise) {
+      console.log(`[${username}] waiting for current round to finish...`);
+      try {
+        const assignments = await tournament.roundPromise;
+        const userRoom = assignments[username];
+        if (userRoom) {
+          io.to(socket.id).emit("start_new_round", {
+            assignments: { [username]: userRoom },
+            tournamentId,
+          });
+        }
+      } catch (err) {
+        console.error(`[${username}] failed to get new round:`, err);
+      }
       return;
     }
 
-    // Track ready players (array per room)
-    room.readyPlayers = room.readyPlayers || [];
-    if (!room.readyPlayers.includes(username)) {
-      room.readyPlayers.push(username);
+    // 🧭 If tournament already has rooms ready — just assign player
+    if (!tournament.isCreatingRound || tournament.isCreatingRound === "false") {  
+      if (tournament.newRoomCreated || tournament.newRoomCreated === "true") {
+        const existingRoom = tournament.rooms.find(
+          (r) => r.playerone === username || r.playertwo === username
+        );
+        if (existingRoom) {
+          io.to(socket.id).emit("start_new_round", {
+            assignments: { [username]: existingRoom.room_id },
+            tournamentId,
+          });
+          return;
+        }
+      }
     }
 
-    const bothReady =
-      room.readyPlayers.includes(p1Key) && room.readyPlayers.includes(p2Key);
+    // 🛑 Acquire lock
+    console.log(`[${username}] creating new round...`);
 
-    if (!bothReady) {
-      // Wait until both players have emitted `player_ready`
-      return;
-    }
-
-    // If a round creation is already in progress, do nothing.
-    // The process that set the lock will emit the start_new_round to the room when done.
-    if (tournament.isCreatingRound) {
-      return;
-    }
-
-    // Acquire lock so only one handler will create the next round
-    tournament.isCreatingRound = true;
+    // Create a Promise that others can await
+    let resolvePromise, rejectPromise;
+    tournament.roundPromise = new Promise((resolve, reject) => {
+      resolvePromise = resolve;
+      rejectPromise = reject;
+    });
 
     try {
-      // Clear/prepare tournament state centrally (your previous logic did this)
-      tournament.winners = [];
-      tournament.rooms = []; // clear existing rooms if that's your intended behavior
+      // Create new rooms
+      tournament.rooms = [];
+      const playersDbs = await fetchPlayers(tournamentId);
+      if (!playersDbs.success) {
+        console.log("Could not fetch players");
+      }
 
-      // createRound should populate tournament.rooms for the tournamentId
-      const newRooms = createRound(playersDbs, tournamentId);
+      const result = createRound(playersDbs.players, tournamentId);
+      if (!result.success || !result.rooms) {
+        throw new Error(result.message || "Round creation failed");
+      }
 
-      // Build assignments: for each of the two players find their new room
+      tournament.rooms = result.rooms;
+
+      // Build assignments map
       const assignments = {};
-
-      [room.playerone, room.playertwo].forEach((player) => {
-        const newRoom = newRooms.find(
-          (r) => r.playerone === player || r.playertwo === player
-        );
-        assignments[player] = newRoom ? newRoom.room_id : null;
+      result.rooms.forEach((room) => {
+        assignments[room.playerone] = room.room_id;
+        assignments[room.playertwo] = room.room_id;
       });
 
-      // Emit to the old room once with per-player assignments
-      io.to(room_id).emit("start_new_round", {
-        assignments,          // { usernameA: roomIdA, usernameB: roomIdB }
-        tournamentId,
-      });
+      // ✅ Resolve the shared promise so any waiting players get their rooms
+      resolvePromise(assignments);
 
-      console.log("Created new round and emitted assignments:", assignments);
+      // Notify all connected players in this tournament room
+      io.to(room_id).emit("start_new_round", { assignments, tournamentId });
+
+      console.log("✅ Created new round successfully!");
     } catch (err) {
-      console.error("Error creating new round:", err);
+      rejectPromise(err);
+      console.error("❌ Error creating new round:", err);
     } finally {
-      // Release the lock after a short safe delay
+      // Release lock safely and clear promise
       setTimeout(() => {
         tournament.isCreatingRound = false;
-      }, 250); // small delay to avoid immediate re-entrancy; tune if needed
+        tournament.roundPromise = null;
+        tournament.newRoomCreated = true;
+      }, 250);
     }
   });
 
