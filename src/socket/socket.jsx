@@ -1,10 +1,6 @@
 import { io } from "socket.io-client";
 
-// const socket = io("https://whot-1.onrender.com", {
-//   transports: ["websocket"], // helps avoid polling issues on Render
-// });
-
-const socket = io("http://localhost:8000", {
+const socket = io("https://whot-production.up.railway.app", {
   transports: ["websocket"], // helps avoid polling issues on Render
 });
 
