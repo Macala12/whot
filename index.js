@@ -18,7 +18,7 @@ const server = app.listen(PORT, () => {
 });
 
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:4000", "https://octagames-whot.onrender.com/"],  // or "*" to allow all
+  origin: ["https://octagames-whot.onrender.com", "https://octagames.ng", "https://www.octagames.ng"],  // or "*" to allow all
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
