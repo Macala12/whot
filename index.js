@@ -251,7 +251,7 @@ const io = require("socket.io")(server, {
       "http://localhost:3000", 
       "http://localhost:4000",
       "http://172.20.10.3:3000",
-      "https://octagames-whot.onrender.com/"
+      "https://www.whot.octagames.ng"
     ], // React dev server
     // origin: "*",
     methods: ["GET", "POST"]
@@ -546,10 +546,10 @@ io.on("connection", (socket) => {
         }
       });
       
-      if (roundCount === 1) {
+      if (roundCount === 5) {
           io.to(currentRoom.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
       }else{
-        if (roundCount < 2) {
+        if (roundCount < 5) {
             io.to(currentRoom.room_id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
         }
       }
