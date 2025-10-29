@@ -46,9 +46,7 @@ function Leaderboard() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        // Tab is active again → resync timer
-        console.log("back to screen");
-        
+        // Tab is active again → resync timer        
         socket.emit("next_round_timer", { gameId });
       }
     };
@@ -86,7 +84,6 @@ function Leaderboard() {
   // Redirect when time is up
   useEffect(() => {
     if (isTimeUp) {
-      console.log("going to player ready");
       let room_id = gameId;
       
       socket.emit("player_ready", { room_id: room_id, username: username, tournamentId: tournamentId });

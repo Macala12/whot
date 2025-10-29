@@ -24,9 +24,7 @@ function RoundTimer() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        // Tab is active again → resync timer
-        console.log("back to screen");
-        
+        // Tab is active again → resync timer        
         socket.emit("getRoundTime", { room_id: room_id, tournamentId: tournamentId });
       }
     };

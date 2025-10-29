@@ -5,6 +5,8 @@
 .number p {
   font-size: 12px;
   margin-bottom: 3px;
+  color: #000 !important;
+  text-align: none !important;
 }
 
 .reverse {

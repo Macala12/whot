@@ -96,8 +96,7 @@ function RoundOver() {
   useEffect(() => {
     socket.on("winner", ({ winnerId }) => {
       setWinner(winnerId);
-      console.log(winnerId);
-      
+            
       if (winnerId === "user") {
           confettiAnimation(confetti);
       }
@@ -105,7 +104,6 @@ function RoundOver() {
 
   socket.on("new_round", ({ userGameId, toLeaderboard }) => {
     localStorage.removeItem("waitingEndTime"); // reset for next round
-    console.log(toLeaderboard);
     
     if (toLeaderboard === true || toLeaderboard === "true") {
       setCountdown("5")
