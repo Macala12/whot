@@ -39,13 +39,13 @@ mongoose.connect("mongodb+srv://michael-user-1:Modubass1212@assetron.tdmvued.mon
 async function hardcoded() {
   const players = await fetchPlayers("68dd869c8c9854acf5ad1a1d");
 
-if (players.success) {
-  const result = createRound(players.players, "68dd869c8c9854acf5ad1a1d");
+  if (players.success) {
+    const result = createRound(players.players, "68dd869c8c9854acf5ad1a1d");
 
-  if (result.success) {
-    console.log(result.rooms);
+    if (result.success) {
+      console.log(result.rooms);
+    }
   }
-}
 }
 
 // 🔹 Tournament store
@@ -95,8 +95,8 @@ function createRound(players, tournamentId) {
     return { success: false, message: "Not enough players to create a round" };
   }
 
-  const sevenMinutesLater = Date.now() + 1.3 * 60 * 1000;
-  const nextRound = Date.now() + 2.3 * 60 * 1000;
+  const sevenMinutesLater = Date.now() + 5 * 60 * 1000;
+  const nextRound = Date.now() + 7 * 60 * 1000;
   const shuffledPlayers = shuffleArray(players);
 
   for (let i = 0; i < shuffledPlayers.length; i += 2) {
@@ -508,7 +508,7 @@ io.on("connection", (socket) => {
   });
 
   // Game Totals
-  socket.on("game:totals", ({ userCardTotal, opponentCardsTotal, tournamentId, username, winnerId, tournament_id }) => {
+  socket.on("game:totals", async ({ userCardTotal, opponentCardsTotal, tournamentId, username, winnerId, tournament_id }) => {
     const tournament = getTournament(tournament_id);
     let { winners, roundCount } = tournament;
 
@@ -531,27 +531,28 @@ io.on("connection", (socket) => {
 
     if (!winners.includes(winnerUsername)) {
       winners.push(winnerUsername);
-    }
+      const updatedScore = await Leaderboard.findOneAndUpdate(
+        { leaderboardId: tournament_id, username: winnerUsername },
+        { $inc: { score: 3 } },
+        { new: true }
+      );
 
-    if (winners.length === 1) {
-      winners.forEach(async (winner) => {
-        const updatescore = await Leaderboard.findOneAndUpdate(
-          { leaderboardId: tournament_id, username: winner },
-          { $inc: { score: 3 } },
-          { new: true }
-        );
+      if (updatedScore) {
+        console.log(`Updated score for ${winnerUsername}`);
+      }else {
+        console.warn(`No leaderboard entry found for ${winner}`);
+      }
 
-        if (updatescore) {
-          console.log(`Update score for ${winner}`);
-        }
-      });
-      
       if (roundCount === 5) {
-          io.to(currentRoom.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
-      }else{
-        if (roundCount < 5) {
-            io.to(currentRoom.room_id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
-        }
+        io.to(currentRoom.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
+      } else {
+        io.to(currentRoom.room_id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
+      }
+    }else{
+      if (roundCount === 5) {
+        io.to(currentRoom.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
+      } else {
+        io.to(currentRoom.room_id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
       }
     }
   });
@@ -634,6 +635,7 @@ io.on("connection", (socket) => {
     try {
       // Create new rooms
       tournament.rooms = [];
+      tournament.winners = [];
       const playersDbs = await fetchPlayers(tournamentId);
       if (!playersDbs.success) {
         console.log("Could not fetch players");
