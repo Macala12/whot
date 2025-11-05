@@ -27,7 +27,7 @@ function WastingTime({ type }) {
     let endTime = sessionStorage.getItem("endTime");
 
     if (!endTime) {
-      const countdownDuration = 15 * 60 * 1000; // 15 minutes
+      const countdownDuration = 1 * 60 * 1000; // 15 minutes
       endTime = Date.now() + countdownDuration;
       sessionStorage.setItem("endTime", endTime);
     } else {
