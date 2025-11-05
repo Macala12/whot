@@ -543,13 +543,13 @@ io.on("connection", (socket) => {
         console.warn(`No leaderboard entry found for ${winner}`);
       }
 
-      if (roundCount === 5) {
+      if (roundCount === 2) {
         io.to(currentRoom.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
       } else {
         io.to(currentRoom.room_id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
       }
     }else{
-      if (roundCount === 5) {
+      if (roundCount === 2) {
         io.to(currentRoom.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
       } else {
         io.to(currentRoom.room_id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
