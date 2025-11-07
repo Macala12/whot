@@ -97,7 +97,7 @@ function createRound(players, tournamentId) {
   }
 
   const sevenMinutesLater = Date.now() + 5 * 60 * 1000;
-  const nextRound = Date.now() + 7 * 60 * 1000;
+  const nextRound = Date.now() + 1 * 60 * 1000;
   const shuffledPlayers = shuffleArray(players);
 
   for (let i = 0; i < shuffledPlayers.length; i += 2) {
