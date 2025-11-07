@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const initializeDeck = require("./utils/functions/initializeDeck");
 const reverseState = require("./utils/functions/reverseState");
 
@@ -18,7 +20,7 @@ const server = app.listen(PORT, () => {
 });
 
 app.use(cors({
-  origin: ["https://octagames-whot.onrender.com", "https://octagames.ng", "https://www.octagames.ng", "http://localhost:3000"],  // or "*" to allow all
+  origin: ["https://octagames-whot.onrender.com", "https://octagames.ng", "https://www.octagames.ng"],  // or "*" to allow all
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
@@ -27,10 +29,9 @@ app.use(express.json());
 
 // DB connect
 let playersDbs;
-mongoose.connect("mongodb+srv://michael-user-1:Modubass1212@assetron.tdmvued.mongodb.net/octagames")
+mongoose.connect(`mongodb+srv://${process.env.MONGODB_URL}`)
 .then(() => {
   console.log("MongoDB Connected");
-  // hardcoded();
 })
 .catch((err) => console.log("DB Connection Error:", err));
 
@@ -432,8 +433,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("endTournamentRoom", ({ tournamentId, roomId }) => {
-    
-    
     const tournament = getTournament(tournamentId);
     if (!tournament) return;
 
@@ -533,7 +532,7 @@ io.on("connection", (socket) => {
       winners.push(winnerUsername);
       const updatedScore = await Leaderboard.findOneAndUpdate(
         { leaderboardId: tournament_id, username: winnerUsername },
-        { $inc: { score: 3 } },
+        { $inc: { score: 10 } },
         { new: true }
       );
 
@@ -543,13 +542,13 @@ io.on("connection", (socket) => {
         console.warn(`No leaderboard entry found for ${winner}`);
       }
 
-      if (roundCount === 2) {
+      if (roundCount === process.env.GAME_COUNT) {
         io.to(currentRoom.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
       } else {
         io.to(currentRoom.room_id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
       }
     }else{
-      if (roundCount === 2) {
+      if (roundCount === process.env.GAME_COUNT) {
         io.to(currentRoom.room_id).emit("tournamentIsOver", { isOver: true, tournamentId });
       } else {
         io.to(currentRoom.room_id).emit("new_round", { userGameId: currentRoom.room_id, toLeaderboard: true });
