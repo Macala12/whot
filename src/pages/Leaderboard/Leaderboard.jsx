@@ -117,12 +117,12 @@ function Leaderboard() {
       </div>
       <h3>Whot Leaderboard</h3>
       <p>Track the top players, their scores, and progress across all rounds of the Whot game. The leaderboard updates in real time to highlight who’s leading each match.</p>
-
+      <b className="text-danger"><h3>Don't Leave this screen, you will be redirected to the next round</h3></b>
       <h3 className="roundTimer">
         {timeLeft !== null ? (
           <h6>{formatTime(timeLeft)}</h6>
         ) : (
-          <h6>Loading...</h6>
+          <h6><a href={`/play-connector?player=${username}&roomId=${gameId}&id=${tournamentId}`}>Click to go to next round</a></h6>
         )}
       </h3>
       <p>to next round</p>
