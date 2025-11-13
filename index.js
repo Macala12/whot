@@ -38,10 +38,10 @@ mongoose.connect(`mongodb+srv://${process.env.MONGODB_URL}`)
 
 //Hardcoded
 async function hardcoded() {
-  const players = await fetchPlayers("68dd869c8c9854acf5ad1a1d");
+  const players = await fetchPlayers("690134138913e5fbebf491e5");
 
   if (players.success) {
-    const result = createRound(players.players, "68dd869c8c9854acf5ad1a1d");
+    const result = createRound(players.players, "690134138913e5fbebf491e5");
 
     if (result.success) {
       console.log(result.rooms);
@@ -97,7 +97,7 @@ function createRound(players, tournamentId) {
   }
 
   const sevenMinutesLater = Date.now() + 5 * 60 * 1000;
-  const nextRound = Date.now() + 1 * 60 * 1000;
+  const nextRound = Date.now() + 6 * 60 * 1000;
   const shuffledPlayers = shuffleArray(players);
 
   for (let i = 0; i < shuffledPlayers.length; i += 2) {
