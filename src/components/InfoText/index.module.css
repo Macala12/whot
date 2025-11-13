@@ -46,10 +46,11 @@
 
 @media screen and (max-width: 650px) {
   .text {
-    padding: 9px;
-    min-height: 60px;
+    padding: 11px;
+    min-height: 55px;
     font-size: 13px;
     font-weight: 600;
+    border-radius: 10px;
   }
 }
 /*# sourceMappingURL=index.module.css.map */

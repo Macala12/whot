@@ -72,6 +72,12 @@ body{
     color: #1F2833;
     padding: 0px 10px 10px;
 }
-.text-danger{
-    color: red;
+.text-danger h3{
+    color: red !important;
+    margin-top: 10px;
+}
+
+.roundTimer a{
+    color: #fff !important;
+    text-decoration: none;
 }

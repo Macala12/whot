@@ -15,14 +15,16 @@
     top: unset;
     left: unset;
     bottom: 30px;
-    right: -55px;
+    right: 0;
   }
 }
 
 @media screen and (max-width: 650px) {
   .info_area {
-    top: 40%;
-    left: 10%;
+    top: 15px;
+    height: 0px;
+    width: 100px;
+    right: 0px;
   }
 }
 /*# sourceMappingURL=index.module.css.map */
