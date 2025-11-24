@@ -26,6 +26,7 @@ import WastingTime from "../../components/WastingTIme/WastingTIme";
 // import useTurnTimer from "../../utils/hooks/useTurnTime";
 
 function App() {  
+  sessionStorage.removeItem("gameOver");
   setTimeout(() => {
     reload();
   }, 2000);
