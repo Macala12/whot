@@ -412,7 +412,7 @@ io.on("connection", (socket) => {
       io.to(currentRoom.room_id).emit("nextRoundTime", {
       nextRoundTime: currentRoom.nextRoundTime,
       leaderboard,
-      ROUNDS_LEFT: 2 - tournament.roundCount,
+      ROUNDS_LEFT: process.env.GAME_COUNT - tournament.roundCount,
     });
 
     
