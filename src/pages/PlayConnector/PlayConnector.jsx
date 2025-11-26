@@ -5,7 +5,6 @@ import socket from "../../socket/socket";
 import React, { useEffect, useState } from "react";
 
 function PlayConnector() {
-  sessionStorage.removeItem("waitingEndTime");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 

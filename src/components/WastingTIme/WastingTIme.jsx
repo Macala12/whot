@@ -34,8 +34,6 @@ function WastingTime({ type }) {
       endTime = parseInt(endTime, 10);
     }
 
-    const timer = setInterval(updateTime, 1000);
-
     const updateTime = () => {
       const diff = endTime - Date.now();
 
@@ -49,6 +47,7 @@ function WastingTime({ type }) {
     };
 
     updateTime();
+    const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, [gameover]);
 
