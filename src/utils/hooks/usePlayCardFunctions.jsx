@@ -15,7 +15,7 @@ function usePlayCardFunctions({
   goToMarket,
   marketConfig,
   setIsShownState,
-  delay, 
+  delay,
 }) {
   const location = useLocation();
 

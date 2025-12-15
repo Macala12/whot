@@ -3,8 +3,7 @@ import combinedReducer from "./reducers/playFriendCombinedReducer";
 import socket from "../socket/socket";
 
 let pathname = window.location.pathname;
-const tournamentId = sessionStorage.getItem("tID");
-const room_id = sessionStorage.getItem("gameId");
+let room_id = pathname.slice(pathname.length - 4, pathname.length);
 
 const enhancedReducer = (state, action) => {
   if (action.type === "INITIALIZE_DECK") {
@@ -30,7 +29,7 @@ const getUpdatedState = ({ getState }) => {
       action.type !== "TOGGLE_INFO_SHOWN" &&
       action.type !== "INITIALIZE_DECK"
     ) {
-      socket.emit("sendUpdatedState", updatedState, room_id, tournamentId);
+      socket.emit("sendUpdatedState", updatedState, room_id);
     }
 
     return returnValue;

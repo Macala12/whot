@@ -39,26 +39,18 @@
   .text {
     width: 100px;
     min-height: 70px;
-<<<<<<< HEAD
     left: -36px;
     font-size: 12px;
     font-weight: 600;
     text-align: center;
     border-radius: 5px;
-=======
-    left: -60px;
-    font-size: 14px;
->>>>>>> f24306954684fce65c0df09a8e799635242b50a8
   }
 }
 
 @media screen and (max-width: 650px) {
   .text {
-    padding: 11px;
-    min-height: 55px;
-    font-size: 13px;
-    font-weight: 600;
-    border-radius: 10px;
+    padding: 6px;
+    min-height: 60px;
   }
 }
 /*# sourceMappingURL=index.module.css.map */

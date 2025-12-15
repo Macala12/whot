@@ -5,7 +5,7 @@ import style from "./index.module.css";
 import Market from "../Market/Market";
 
 function CenterArea() {
-  const activeCard = useSelector((state) => state.activeCard);
+  const [activeCard] = useSelector((state) => [state.activeCard]);
   return (
     <div className={style.center_area}>
       <Market />

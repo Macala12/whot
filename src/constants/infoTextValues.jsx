@@ -1,5 +1,5 @@
 const infoTextValues = {
-  usersTurn: "It's your turn to make a move now - you only have 10 seconds",
+  usersTurn: "It's your turn to make a move now",
   computersTurn: "The computer is calculating it's moves",
   userPickedThree: "You were made to pick 3",
   userPickedTwo: "You were made to pick 2",
@@ -9,5 +9,5 @@ const infoTextValues = {
   opponentReceivedGeneralMarket: "You played a general market so play again",
   opponentSuspended: "You played a suspension card so play again",
 };
- 
+
 export default infoTextValues;
