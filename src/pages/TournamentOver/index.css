@@ -1,0 +1,31 @@
+body{
+    color: #fff;
+    text-align: center;
+}
+.h-screen{
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    align-content: center;
+}
+.trophy{
+    width: 80px;
+    height: 80px;
+}
+.redirect_btn{
+    background-color: #66fcf1;
+    color: #000;
+    width: fit-content;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 5px;
+}
+h2{
+    font-size: 23px;
+    margin-bottom: 20px;
+}
+.bg-white{
+    height: fit-content;
+}

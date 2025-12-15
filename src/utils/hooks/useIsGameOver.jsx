@@ -1,5 +1,7 @@
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
+<<<<<<< HEAD
 function useIsGameOver(value) {
   const is_gameOver = sessionStorage.getItem("is_gameOver");
     
@@ -33,8 +35,27 @@ function useIsGameOver(value) {
     }
     return { answer, winner };
   };
+=======
+function useIsGameOver() {
+  const userCards = useSelector((state) => state.userCards);
+  const opponentCards = useSelector((state) => state.opponentCards);
 
-  return isGameOver;
+
+  let answer = false;
+  let winner = null;
+>>>>>>> f24306954684fce65c0df09a8e799635242b50a8
+
+  if (userCards.length === 0) {
+    winner = "user";
+    answer = true;
+    sessionStorage.setItem("gameOver", "normal");
+  } else if (opponentCards.length === 0) {
+    winner = "opponent";
+    answer = true;
+    sessionStorage.setItem("gameOver", "normal");
+  }
+
+  return { answer, winner };
 }
 
 export default useIsGameOver;

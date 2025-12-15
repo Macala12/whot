@@ -13,7 +13,12 @@ import usePreload from "../../utils/hooks/usePreload";
 import { Flipper } from "react-flip-toolkit";
 import { useSelector } from "react-redux";
 import "../../index.css";
+<<<<<<< HEAD
 import { useState, useEffect, useRef } from "react";
+=======
+import RoundTimer from "../../components/RoundTimer/RoundTimer";
+import RoundOver from "../../components/RoundOver/RoundOver";
+>>>>>>> f24306954684fce65c0df09a8e799635242b50a8
 
 function App() {
   const { loading, payload } = usePreload();
@@ -45,12 +50,21 @@ function App() {
   return (
     <Flipper flipKey={[activeCard, ...userCards, ...opponentCards]}>
       <div className="App">
+<<<<<<< HEAD
         <UIPanlel payload={payload.payload} />
         <RoundTimer timer={payload.payload.timer} />
         <ComputerCards payload={payload.payload} />
         <CenterArea />
         <UserCards payload={payload.payload} />
         <InfoArea />
+=======
+        <RoundOver />
+        <InfoArea />
+        <RoundTimer />
+        <ComputerCards />
+        <CenterArea />
+        <UserCards />
+>>>>>>> f24306954684fce65c0df09a8e799635242b50a8
         <GameOver />
         <MoveTimer time={waitTime}/>
         {/* <Preloader /> */}

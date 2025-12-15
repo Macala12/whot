@@ -9,6 +9,7 @@
 
 @media screen and (max-width: 650px) {
   .center_area {
+<<<<<<< HEAD
     margin: 100px -50px;
   }
 }
@@ -16,6 +17,9 @@
 @media screen and (max-width: 400px) {
   .center_area {
     margin: 50px -50px;
+=======
+    margin: 90px auto;
+>>>>>>> f24306954684fce65c0df09a8e799635242b50a8
   }
 }
 /*# sourceMappingURL=index.module.css.map */

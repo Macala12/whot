@@ -17,7 +17,11 @@
   .number {
     --width: 20px;
     font-size: 12px;
+<<<<<<< HEAD
     margin-top: 5px;
+=======
+    margin-top: 15px;
+>>>>>>> f24306954684fce65c0df09a8e799635242b50a8
     border-radius: 50%;
   }
 }

@@ -1,0 +1,48 @@
+.card-effect {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1.2rem 2rem;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  text-align: center;
+  opacity: 0;
+  z-index: 0;
+}
+
+.animation{
+    animation: popInOut 2s ease forwards;
+}
+
+.card-effect p { 
+  font-size: 30px;
+  font-weight: 800;
+  color: #ff0048;
+  text-shadow: 0 0 10px #ff0048aa;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+@keyframes popInOut {
+  0% {  
+    z-index: 9999;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  15% {
+    z-index: 9999;
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  80% {
+    z-index: 9999;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    z-index: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+}

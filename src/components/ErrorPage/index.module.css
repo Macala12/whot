@@ -1,6 +1,4 @@
 .error {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.6)), to(rgba(255, 255, 255, 0.6))), url("../../assets/background.jpeg");
-  background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("../../assets/background.jpeg");
   padding: 10px;
   position: fixed;
   top: 0;
@@ -30,6 +28,7 @@
   text-align: center;
   max-width: 450px;
   font-size: 1.1em;
+  color: #fff;
 }
 
 .error .btn {
@@ -39,7 +38,7 @@
   cursor: pointer;
   color: #fff;
   border-radius: 5px;
-  background-color: #007380;
+  background-color: #66fcf1;
   text-align: center;
   padding: 5px 30px;
   width: 100px;

@@ -1,5 +1,5 @@
 .info_area {
-  position: fixed;
+  position: absolute;
   left: 120px;
   top: 100px;
 }
@@ -15,12 +15,13 @@
     top: unset;
     left: unset;
     bottom: 30px;
-    right: -55px;
+    right: 0;
   }
 }
 
 @media screen and (max-width: 650px) {
   .info_area {
+<<<<<<< HEAD
     top: 40%;
     right: 120px;
   }
@@ -30,6 +31,12 @@
   .info_area {
     top: 40%;
     right: 100px;
+=======
+    top: 15px;
+    height: 0px;
+    width: 100px;
+    right: 0px;
+>>>>>>> f24306954684fce65c0df09a8e799635242b50a8
   }
 }
 /*# sourceMappingURL=index.module.css.map */
