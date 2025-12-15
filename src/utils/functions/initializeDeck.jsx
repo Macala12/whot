@@ -54,7 +54,7 @@ const initializeDeck = () => {
   let userCards = [];
   let usedCards = [];
 
-  while (opponentCards.length < 5) {
+  while (opponentCards.length < 4) {
     let card = randomCard(deck);
     if (usedCards.includes(card)) {
       continue;
@@ -64,7 +64,7 @@ const initializeDeck = () => {
     }
   }
 
-  while (userCards.length < 5) {
+  while (userCards.length < 4) {
     let card = randomCard(deck);
     if (usedCards.includes(card)) {
       continue;

@@ -7,6 +7,8 @@ function InfoText() {
     state.infoText,
     state.infoShown,
   ]);
+  const state = useSelector((state) => state); // get entire Redux state
+  sessionStorage.setItem("gameInstances", JSON.stringify(state));
   return (
     <p className={`${style.text} ${!infoShown && style.hidden}`}>{infoText}</p>
   );

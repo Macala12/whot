@@ -3,8 +3,11 @@ import CardComponent from "../CardComponent/CardComponent";
 import { useSelector } from "react-redux";
 import CardNumber from "../CardNumber/CardNumber";
 
-function UserCards() {
+function UserCards({ payload }) {
   const [userCards] = useSelector((state) => [state.userCards]);
+
+  const state = useSelector((state) => state); // get entire Redux state
+  sessionStorage.setItem("gameInstances", JSON.stringify(state));
 
   return (
     <div className="scroll-container">
@@ -20,6 +23,18 @@ function UserCards() {
         ))}
       </div>
       <CardNumber number={userCards.length} />
+      <div className="user">
+        <img
+          src={
+            payload.userimg ||
+            "https://api.dicebear.com/9.x/big-smile/svg?seed=placeholder"
+          }
+          alt="User Avatar"
+        />
+        <div className="username">
+          {payload.username} (You)
+        </div>
+      </div>
     </div>
   );
 }

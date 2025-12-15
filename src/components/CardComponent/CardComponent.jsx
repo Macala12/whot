@@ -12,6 +12,7 @@ import usePlayCardFunctions from "../../utils/hooks/usePlayCardFunctions";
 import { setInfoText, setWhoIsToPlay } from "../../redux/actions";
 import infoTextValues from "../../constants/infoTextValues";
 import { useLocation } from "react-router-dom";
+import cardSound from "../../assets/sounds/card.mp3";
 
 function CardComponent({
   shape,
@@ -71,7 +72,13 @@ function CardComponent({
     }, delay);
   }, [activeCard, userCards, opponentCards]);
 
+  const playCardSound = () => {
+    const audio = new Audio(cardSound);
+    audio.play().catch(() => {});
+  };
+
   const handleClick = () => {
+    playCardSound();
     if (isMarketCard && whoIsToPlay === "user") {
       goToMarket("user", marketConfig, 1);
       dispatch(setWhoIsToPlay("opponent"));
@@ -81,10 +88,7 @@ function CardComponent({
 
     if (!isMine) return;
 
-    if (
-      whoIsToPlay === "user" &&
-      (number === activeCard.number || shape === activeCard.shape)
-    ) {
+    if (whoIsToPlay === "user" && (number === activeCard.number || shape === activeCard.shape)) {
       playUserCard();
     }
   };

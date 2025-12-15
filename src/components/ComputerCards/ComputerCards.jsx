@@ -8,7 +8,7 @@ import useIsGameOver from "../../utils/hooks/useIsGameOver";
 import { setInfoText, setWhoIsToPlay } from "../../redux/actions";
 import infoTextValues from "../../constants/infoTextValues";
 
-function ComputerCards() {
+function ComputerCards({ payload }) {
   const [opponentCards, whoIsToPlay, activeCard, usedCards, userCards] =
     useSelector((state) => [
       state.opponentCards,
@@ -74,8 +74,22 @@ function ComputerCards() {
     }
   }, [whoIsToPlay, userCards, opponentCards]);
 
+  const state = useSelector((state) => state); // get entire Redux state
+  sessionStorage.setItem("gameInstances", JSON.stringify(state));
+
   return (
     <div className="scroll-container">
+      <div className="user user-opponent">
+        <img
+          src={
+            `https://api.dicebear.com/9.x/big-smile/svg?seed=${payload.oppUsername}&radius=50&backgroundType=gradientLinear&randomizeIds=true&skinColor=643d19,8c5a2b,a47539,c99c62&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`
+          }
+          alt="User Avatar"
+        />
+        <div className="username">
+          {payload.oppUsername}
+        </div>
+      </div>
       <div className="grid">{cardArray}</div>
     </div>
   );

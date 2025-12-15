@@ -1,6 +1,8 @@
 .preloader {
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.6)), to(rgba(255, 255, 255, 0.6))), url("../../assets/background.jpeg");
   background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("../../assets/background.jpeg");
+  background-position: center;
+  background-size: cover;
   padding: 10px;
   position: fixed;
   top: 0;
