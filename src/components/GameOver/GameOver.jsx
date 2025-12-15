@@ -6,6 +6,7 @@ import confettiAnimation from "../../utils/functions/confettiAnimation";
 import win from "../../assets/win.png";
 import lose from "../../assets/lose.png";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 function GameOver({ winner }) {
@@ -13,6 +14,12 @@ function GameOver({ winner }) {
   const { userid, gameid, key } = useParams();
   const isGameOver = useIsGameOver();
   const [animationHasRun, setAnimationHasRun] = useState(false);
+
+  const userCards = useSelector((state) => state.userCards);
+  const opponentCards = useSelector((state) => state.opponentCards);
+
+  const userCardTotal = userCards.reduce((acc, card) => acc + card.number, 0);
+  const opponentCardsTotal = opponentCards.reduce((acc, card) => acc + card.number, 0);
 
   let title;
   let subtitle;
@@ -74,7 +81,8 @@ function GameOver({ winner }) {
           body: JSON.stringify({
             userid,
             id: gameid,
-            state: state
+            userScore: userCardTotal,
+            oppScore: opponentCardsTotal
           })
         });
 

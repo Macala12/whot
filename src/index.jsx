@@ -9,7 +9,7 @@ root.render(
     <Router>
       <Routes>
         <Route path="/" exact element={<Home />} />
-        <Route path="/play-computer/:userid/:gameid" element={<PlayComputer />} />
+        <Route path="/play-computer/:userid/:gameid/:key" element={<PlayComputer />} />
         <Route path="/copylink" exact element={<CopyLink />} />
         <Route path="/play-friend" exact element={<PlayFriend />} />
         <Route path="/play-friend/:room_id" exact element={<PlayFriend />} />
