@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 function usePreload() {
-  const API_BASE_URL = 'http://localhost:3000';
+  const API_BASE_URL = 'https://octagames.ng';
   const { userid, gameid, key } = useParams();
   const [loading, setLoading] = useState(true);
   const [payload, setPayload] = useState(null);
@@ -15,7 +15,7 @@ function usePreload() {
         );
         const result = await response.json();  
         if (!result.payload.status) {
-          window.location.href = `${API_BASE_URL}/not_found`;
+          window.location.href = `${API_BASE_URL}/404`;
         }      
         setPayload(result);
       } finally {

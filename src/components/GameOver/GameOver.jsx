@@ -89,7 +89,6 @@ function GameOver({ winner, timeOver }) {
     if (hasCalledEndGame.current) return;
 
     hasCalledEndGame.current = true;
-    console.log("updated score");
 
     const endGame = async () => {
       const response = await fetch(`${API_BASE_URL}/end_game`, {
@@ -105,7 +104,6 @@ function GameOver({ winner, timeOver }) {
       });
 
       const result = await response.json();
-      console.log(result);
       sessionStorage.clear();
     };
 
