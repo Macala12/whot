@@ -13,7 +13,10 @@ function usePreload() {
         const response = await fetch(
           `${API_BASE_URL}/initialize_game?id=${gameid}&userid=${userid}&key=${key}`
         );
-        const result = await response.json();        
+        const result = await response.json();  
+        if (!result.payload.status) {
+          window.location.href = `${API_BASE_URL}/not_found`;
+        }      
         setPayload(result);
       } finally {
         setLoading(false);

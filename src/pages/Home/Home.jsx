@@ -109,7 +109,6 @@ function Home() {
           <Link to="/copylink">PLAY FRIEND</Link>
         </div>
       </main>
-      <Footer />
     </section>
   );
 }

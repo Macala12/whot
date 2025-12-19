@@ -30,7 +30,7 @@ function App() {
   useEffect(() => {
     if (whoIsToPlay === "user") {
       if (!moveTimerStartedRef.current) {
-        const time = Date.now() + 180 * 1000;
+        const time = Date.now() + 15 * 1000;
         setWaitTime(time);
         moveTimerStartedRef.current = true;
       }
@@ -40,7 +40,7 @@ function App() {
     }
   }, [whoIsToPlay]);
 
-  if (loading) return <Preloader />;
+  if (loading || !payload || !payload.payload) return <Preloader />;
   
   return (
     <Flipper flipKey={[activeCard, ...userCards, ...opponentCards]}>
@@ -53,7 +53,7 @@ function App() {
         <InfoArea />
         <GameOver />
         <MoveTimer time={waitTime}/>
-        {/* <Preloader /> */}
+        <Preloader />
       </div>
     </Flipper>
   );
